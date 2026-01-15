@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
+import click
 import pandas as pd
 from sqlalchemy import create_engine
 from tqdm.auto import tqdm
@@ -29,18 +30,17 @@ parse_dates = [
     "tpep_dropoff_datetime"
 ]
 
-def run():
-    year = 2021
-    month = '01'
-    targettable = 'yellow_taxi_data'
-    chukksize = 100000
-
-    pg_user = 'root'
-    pg_pass = 'root'
-    pg_host = 'localhost'
-    pg_port = 5432
-    pg_db = 'ny_taxi'
-
+@click.command()
+@click.option('--year', default=2021, type=int, help='Year of the data')
+@click.option('--month', default='01', type=str, help='Month of the data')
+@click.option('--targettable', default='yellow_taxi_data', type=str, help='Target table name')
+@click.option('--chunksize', default=100000, type=int, help='Chunk size for data ingestion')
+@click.option('--pg_user', default='root', type=str, help='PostgreSQL user')
+@click.option('--pg_pass', default='root', type=str, help='PostgreSQL password')
+@click.option('--pg_host', default='localhost', type=str, help='PostgreSQL host')
+@click.option('--pg_port', default=5432, type=int, help='PostgreSQL port')
+@click.option('--pg_db', default='ny_taxi', type=str, help='PostgreSQL database')
+def run(year, month, targettable, chunksize, pg_user, pg_pass, pg_host, pg_port, pg_db):
     # Read a sample of the data
     url = 'https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_{year}-{month}.csv.gz'
 
@@ -64,7 +64,7 @@ def run():
         dtype=dtype,
         parse_dates=parse_dates,
         iterator=True,
-        chunksize=chukksize
+        chunksize=chunksize
     )
     first_chunk = next(df_iter)
 
