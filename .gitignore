@@ -1,4 +1,5 @@
 *.parquet
+pipeline/ny_taxi_postgres_data/18/docker/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
